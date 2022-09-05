@@ -88,8 +88,8 @@
     function log(msg) {
         console.log(msg);
         const dateStr = new Date().toLocaleTimeString();
-        messages.value+=dateStr+" | " + msg +"\n"
-        
+        messages.value += dateStr + " | " + msg + "\n"
+
     }
 
     function askPermision() {
@@ -112,8 +112,16 @@
                 body: 'Your meeting is about to start',
                 icon: 'https://frlncr.com/favicon.ico',
                 vibrate: [200, 100, 200, 100, 200, 100, 200],
-                tag: 'vibration-sample'
-            });
+                tag: 'vibration-sample',
+                actions: [{ action: 'open', title: 'Open now' }]
+            })
+
+            registration.addEventListener('notificationclick', (event) => {
+                event.notification.close();
+                if (event.action === 'open') {
+                    clients.openWindow("https://frlncr.com/timeline/today");
+                }
+            })
         });
     }
     function sendNotificationSimple() {
