@@ -49,6 +49,7 @@
 <body>
     <input type="button" class="button" , id="btnPemision" value="Request permision" disabled />
     <input type="button" class="button" , id="btnNotification" value="Send Notification" disabled />
+    <textarea id="messages" readonly rows="20" cols="100"></textarea>
 </body>
 <script>
     const btnNotification = document.getElementById('btnNotification');
@@ -57,20 +58,23 @@
     const btnPemision = document.getElementById('btnPemision');
     btnPemision.onclick = askPermision;
 
+    const messages = document.getElementById('messages');
+
     if ('serviceWorker' in navigator) {
         // declaring scope manually
         navigator.serviceWorker.register('/testnotificaiton/sw.js', { scope: '/testnotificaiton/' }).then((registration) => {
-            console.log('Service worker registration succeeded:', registration);
+            log('Service worker registration succeeded:', registration);
         }, /*catch*/(error) => {
-            console.error(`Service worker registration failed: ${error}`);
+            log(`Service worker registration failed: ${error}`);
         });
     } else {
-        console.error('Service workers are not supported.');
+        log('Service workers are not supported.');
     }
 
     if (!Notification) {
-        console.log('Push notifications are not supported in your browser..');
+        log('Push notifications are not supported in your browser..');
     } else {
+        log("Notification.permission=" + Notification.permission)
         if (Notification.permission === "granted") {
             btnPemision.disabled = true
             btnNotification.disabled = false
@@ -81,14 +85,22 @@
     }
 
 
-
+    function log(msg) {
+        console.log(msg);
+        const dateStr = new Date().toLocaleTimeString();
+        messages.value+=dateStr+" | " + msg +"\n"
+        
+    }
 
     function askPermision() {
         if (Notification.permission !== "granted") {
             Notification.requestPermission().then((permission) => {
                 if (permission === "granted") {
+                    log("Permision granted")
                     btnPemision.disabled = true
                     btnNotification.disabled = false
+                } else {
+                    log("Permision " + permission)
                 }
             })
         }
@@ -104,8 +116,7 @@
         });
     }
     function sendNotificationSimple() {
-        console.log("Notification.permission=" + Notification.permission)
-        console.log("show notification")
+        log("show notification")
         var notification = new Notification('FRNLNC simple notification', {
             icon: 'https://frlncr.com/favicon.ico',
             body: "Your meeting is about to start",
@@ -118,7 +129,7 @@
 
         // Callback function when the notification is closed.
         notification.onclose = function () {
-            console.log('Notification closed');
+            log('Notification closed');
         };
 
     }
