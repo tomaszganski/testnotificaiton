@@ -106,6 +106,7 @@
         }
     }
     function sendNotificationSW() {
+        log("show notification")
         navigator.serviceWorker.ready.then((registration) => {
             registration.showNotification('FRNLNC sw notification', {
                 body: 'Your meeting is about to start',
