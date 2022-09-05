@@ -117,6 +117,7 @@
             })
 
             registration.addEventListener('notificationclick', (event) => {
+                log("notification clicked")
                 event.notification.close();
                 if (event.action === 'open') {
                     clients.openWindow("https://frlncr.com/timeline/today");
