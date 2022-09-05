@@ -1,9 +1,46 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Notifications</title>
-    </head>
-    <body>
-        <p>Hello world</p>
-    </body>
+
+<head>
+    <title>Notifications</title>
+</head>
+
+<body>
+    <input type="button" id="btnPush" value="Send Notification" />
+</body>
+<script>
+    const btn = document.getElementById('btnPush');
+    btn.onclick = sendNotification;
+
+    function sendNotification(title, message, url) {
+        //First, check notification is supported or not in your browser!
+        if (!Notification) {
+            console.log('Push notifications are not supported in your browser..');
+            return;
+        }
+
+        console.log("Notification.permission="+Notification.permission)
+        if (Notification.permission !== "granted") {
+            Notification.requestPermission();
+        }
+        else {
+            console.log("show notification")
+            var notification = new Notification('FRNLNC notification', {
+                icon: 'https://frlncr.com/favicon.ico',
+                body: "Your meeting is about to start",
+            });
+
+            // Remove the notification when clicked and open the URL.
+            notification.onclick = function () {
+                window.open("https://frlncr.com/timeline/today");
+            };
+
+            // Callback function when the notification is closed.
+            notification.onclose = function () {
+                console.log('Notification closed');
+            };
+        }
+    }
+</script>
+
 </html>
