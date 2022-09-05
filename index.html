@@ -3,43 +3,104 @@
 
 <head>
     <title>Notifications</title>
+    <style>
+        .button {
+            background-color: #00bbd3;
+            border-radius: 8px;
+            border-style: none;
+            box-sizing: border-box;
+            color: #FFFFFF;
+            cursor: pointer;
+            display: inline-block;
+            font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            height: 40px;
+            line-height: 20px;
+            list-style: none;
+            margin: 0;
+            outline: none;
+            padding: 10px 16px;
+            position: relative;
+            text-align: center;
+            text-decoration: none;
+            transition: color 100ms;
+            vertical-align: baseline;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            display: block;
+            margin: 10px;
+        }
+
+        .button:hover,
+        .button:focus {
+            background-color: #62eeff;
+        }
+
+        .button:disabled,
+        .button[disabled] {
+            background-color: #666;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 
 <body>
-    <input type="button" id="btnPush" value="Send Notification" />
+    <input type="button" class="button" , id="btnPemision" value="Request permision" disabled />
+    <input type="button" class="button" , id="btnNotification" value="Send Notification" disabled />
 </body>
 <script>
-    const btn = document.getElementById('btnPush');
-    btn.onclick = sendNotification;
+    const btnNotification = document.getElementById('btnNotification');
+    btnNotification.onclick = sendNotification;
 
-    function sendNotification(title, message, url) {
-        //First, check notification is supported or not in your browser!
-        if (!Notification) {
-            console.log('Push notifications are not supported in your browser..');
-            return;
+    const btnPemision = document.getElementById('btnPemision');
+    btnPemision.onclick = askPermision;
+
+    if (!Notification) {
+        console.log('Push notifications are not supported in your browser..');
+    } else {
+        if (Notification.permission === "granted") {
+            btnPemision.disabled = true
+            btnNotification.disabled = false
+        } else {
+            btnPemision.disabled = false
+            btnNotification.disabled = true
         }
+    }
 
-        console.log("Notification.permission="+Notification.permission)
+
+
+
+    function askPermision() {
         if (Notification.permission !== "granted") {
-            Notification.requestPermission();
+            Notification.requestPermission().then((permission) => {
+                if (permission === "granted") {
+                    btnPemision.disabled = true
+                    btnNotification.disabled = false
+                }
+            })
         }
-        else {
-            console.log("show notification")
-            var notification = new Notification('FRNLNC notification', {
-                icon: 'https://frlncr.com/favicon.ico',
-                body: "Your meeting is about to start",
-            });
+    }
 
-            // Remove the notification when clicked and open the URL.
-            notification.onclick = function () {
-                window.open("https://frlncr.com/timeline/today");
-            };
+    function sendNotification() {
+        console.log("Notification.permission=" + Notification.permission)
+        console.log("show notification")
+        var notification = new Notification('FRNLNC notification', {
+            icon: 'https://frlncr.com/favicon.ico',
+            body: "Your meeting is about to start",
+        });
 
-            // Callback function when the notification is closed.
-            notification.onclose = function () {
-                console.log('Notification closed');
-            };
-        }
+        // Remove the notification when clicked and open the URL.
+        notification.onclick = function () {
+            window.open("https://frlncr.com/timeline/today");
+        };
+
+        // Callback function when the notification is closed.
+        notification.onclose = function () {
+            console.log('Notification closed');
+        };
+
     }
 </script>
 
