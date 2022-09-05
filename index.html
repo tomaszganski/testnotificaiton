@@ -52,10 +52,21 @@
 </body>
 <script>
     const btnNotification = document.getElementById('btnNotification');
-    btnNotification.onclick = sendNotification;
+    btnNotification.onclick = sendNotificationSW;
 
     const btnPemision = document.getElementById('btnPemision');
     btnPemision.onclick = askPermision;
+
+    if ('serviceWorker' in navigator) {
+        // declaring scope manually
+        navigator.serviceWorker.register('/testnotificaiton/sw.js', { scope: '/testnotificaiton/' }).then((registration) => {
+            console.log('Service worker registration succeeded:', registration);
+        }, /*catch*/(error) => {
+            console.error(`Service worker registration failed: ${error}`);
+        });
+    } else {
+        console.error('Service workers are not supported.');
+    }
 
     if (!Notification) {
         console.log('Push notifications are not supported in your browser..');
@@ -82,11 +93,20 @@
             })
         }
     }
-
-    function sendNotification() {
+    function sendNotificationSW() {
+        navigator.serviceWorker.ready.then((registration) => {
+            registration.showNotification('FRNLNC sw notification', {
+                body: 'Your meeting is about to start',
+                icon: 'https://frlncr.com/favicon.ico',
+                vibrate: [200, 100, 200, 100, 200, 100, 200],
+                tag: 'vibration-sample'
+            });
+        });
+    }
+    function sendNotificationSimple() {
         console.log("Notification.permission=" + Notification.permission)
         console.log("show notification")
-        var notification = new Notification('FRNLNC notification', {
+        var notification = new Notification('FRNLNC simple notification', {
             icon: 'https://frlncr.com/favicon.ico',
             body: "Your meeting is about to start",
         });
